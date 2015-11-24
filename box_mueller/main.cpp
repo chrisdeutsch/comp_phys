@@ -22,7 +22,7 @@ double box_mueller() {
     // else generate two new ones
     auto u = dist(gen), v = dist(gen);
 
-    static const double two_pi = 2.0 * M_PI;
+    static constexpr double two_pi = 2.0 * M_PI;
     auto sqrt_log = std::sqrt(-2.0 * std::log(u));
 
     // save the second random number for next call and return the first
