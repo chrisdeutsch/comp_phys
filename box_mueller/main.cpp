@@ -45,12 +45,12 @@ double box_mueller_polar() {
         return rnd_num;
     }
 
-    auto u1 = dist(gen), u2 = dist(gen);
-    double s;
-    while ((s = u1 * u1 + u2 * u2) > 1.0) {
+    double u1, u2, s;
+
+    do {
         u1 = dist(gen);
         u2 = dist(gen);
-    }
+    } while ((s = u1 * u1 + u2 * u2) > 1.0);
 
     auto z = std::sqrt(-2.0 * std::log(s) / s);
 
