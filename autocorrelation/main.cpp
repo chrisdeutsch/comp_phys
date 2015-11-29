@@ -1,9 +1,10 @@
 #include <cstddef>
 #include <numeric>
-
 #include <vector>
-#include <iostream>
+#include <random>
+#include <fstream>
 #include <iterator>
+#include <algorithm>
 
 template <typename InputIterator, typename OutputIterator>
 void autocorrelation_function(InputIterator begin, InputIterator end,
@@ -33,27 +34,32 @@ void autocorrelation_function(InputIterator begin, InputIterator end,
     }
 }
 
-template <typename Container>
-void print_container(const Container &c) {
-    for (const auto &elem : c) {
-        std::cout << elem << std::endl;
+std::vector<double> time_series(unsigned n, double alpha, double x0) {
+    static std::mt19937 gen((std::random_device())());
+    static std::uniform_real_distribution<> dist;
+
+    std::vector<double> series;
+    series.reserve(n + 1);
+    series.push_back(x0);
+
+    for (unsigned i = 0; i != n; ++i) {
+        x0 *= alpha;
+        x0 += (1.0 - alpha) * dist(gen);
+        series.push_back(x0);
     }
+    return series;
 }
 
 int main() {
-    std::vector<double> vd = {
-        0.727504, 0.718915, 0.449088,  0.797964, 0.0968756,  0.8185,   0.882323,
-        0.164807, 0.607614, 0.455075,  0.416633, 0.209309,   0.595713, 0.459449,
-        0.76053,  0.218027, 0.12488,   0.355834, 0.306831,   0.510878, 0.890206,
-        0.137602, 0.305521, 0.0691475, 0.750782, 0.515048,   0.55674,  0.602874,
-        0.630518, 0.617191, 0.884834,  0.216637, 0.398987,   0.075161, 0.223157,
-        0.548678, 0.919536, 0.275558,  0.595751, 0.00478411, 0.181478, 0.214613,
-        0.175442, 0.61162,  0.274793,  0.409027, 0.45021,    0.312003, 0.177765,
-        0.375598};
+    auto series = time_series(10000, 0.9, 0.0);
 
-    std::vector<double> corr;
-    autocorrelation_function(vd.cbegin(), vd.cend(), std::back_inserter(corr), 10);
-    print_container(corr);
+    std::vector<double> autocorrelation;
+    autocorrelation_function(series.cbegin(), series.cend(),
+                             std::back_inserter(autocorrelation), 100);
+
+    std::ofstream os("autocorrelation.dat");
+    std::ostream_iterator<double> os_it(os, "\n");
+    std::copy(autocorrelation.cbegin(), autocorrelation.cend(), os_it);
 
     return 0;
 }
