@@ -17,7 +17,7 @@ double bootstrap_error(InputIt beg, InputIt end,
     std::size_t sample_sz = end - beg;
 
     // RNG to sample for bootstrap
-    std::mt19937 gen((std::random_device())());
+    static std::mt19937 gen((std::random_device())());
     std::uniform_int_distribution<std::size_t> dist(0, sample_sz - 1);
 
     // vector to hold the bootstrap sample and a list of observed values
