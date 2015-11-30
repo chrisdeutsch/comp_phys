@@ -34,6 +34,13 @@ void autocorrelation_function(InputIterator begin, InputIterator end,
     }
 }
 
+template <typename Iterator>
+double tau_int(Iterator beg, Iterator end) {
+    // W >= c * tau_int ( 4<= c <= 10, typ. 6)
+    // tau_int = 1/2 + Sum_t=1^W autocorrelation_fun(t)
+    return 0;
+}
+
 std::vector<double> time_series(unsigned n, double alpha, double x0) {
     static std::mt19937 gen((std::random_device())());
     static std::uniform_real_distribution<> dist;

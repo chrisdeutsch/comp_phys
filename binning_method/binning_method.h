@@ -18,10 +18,17 @@ double mean(Iterator beg, Iterator end, std::function<double(double)> f) {
 }
 
 template <typename Iterator>
+double std_error(Iterator beg, Iterator end) {
+    auto mu = mean(beg, end);
+    auto square = [](double x) { return x * x; };
+    return std::sqrt((mean(beg, end, square) - mu * mu) / (end - beg));
+}
+
+template <typename Iterator>
 double std_dev(Iterator beg, Iterator end) {
     auto mu = mean(beg, end);
     auto square = [](double x) { return x * x; };
-    return std::sqrt(mean(beg, end, square) - mu * mu);
+    return std::sqrt((mean(beg, end, square) - mu * mu));
 }
 
 template <typename InputIterator, typename OutputIterator>
