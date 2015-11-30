@@ -3,16 +3,16 @@
 
 #include <cstddef>
 #include <random>
-#include <functional>
 #include <vector>
 
 // for std_dev
 #include "binning_method.h"
 
+// bootstrap error of estimator with "b" bootstrap samples
 template <typename InputIt>
 double bootstrap_error(InputIt beg, InputIt end,
-                       std::function<double(const std::vector<double> &)> observable,
-                       std::size_t samples) {
+                       std::function<double(const std::vector<double> &)> estimator,
+                       std::size_t b) {
     // size of sample to bootstrap
     std::size_t sample_sz = end - beg;
 
@@ -21,19 +21,19 @@ double bootstrap_error(InputIt beg, InputIt end,
     std::uniform_int_distribution<std::size_t> dist(0, sample_sz - 1);
 
     // vector to hold the bootstrap sample and a list of observed values
-    std::vector<double> b_sample(sample_sz);
-    std::vector<double> observ_vals;
+    std::vector<double> bootstrap_sample(sample_sz);
+    std::vector<double> estimated_vals;
 
-    for (std::size_t sample_no = 0; sample_no != samples; ++sample_no) {
+    for (std::size_t sample_num = 0; sample_num != b; ++sample_num) {
         // create bootstrap sample
         for (std::size_t i = 0; i != sample_sz; ++i) {
-            b_sample[i] = beg[dist(gen)];
+            bootstrap_sample[i] = beg[dist(gen)];
         }
-        // add observed value for this sample to list of observed values
-        observ_vals.push_back(observable(b_sample));
+        // add estimated value for this sample to list
+        estimated_vals.push_back(estimator(bootstrap_sample));
     }
-    // estimated observable error
-    return std_dev(observ_vals.cbegin(), observ_vals.cend());
+    // estimator error
+    return std_dev(estimated_vals.cbegin(), estimated_vals.cend());
 }
 
 #endif // BOOTSTRAP_H

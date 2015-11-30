@@ -17,18 +17,22 @@ double mean(Iterator beg, Iterator end, std::function<double(double)> f) {
     return std::accumulate(beg, end, 0.0, add_f) / (end - beg);
 }
 
-template <typename Iterator>
-double std_error(Iterator beg, Iterator end) {
-    auto mu = mean(beg, end);
-    auto square = [](double x) { return x * x; };
-    return std::sqrt((mean(beg, end, square) - mu * mu) / (end - beg));
-}
-
+// sample standard deviation
 template <typename Iterator>
 double std_dev(Iterator beg, Iterator end) {
-    auto mu = mean(beg, end);
-    auto square = [](double x) { return x * x; };
-    return std::sqrt((mean(beg, end, square) - mu * mu));
+    const double mu = mean(beg, end);
+    auto add_sq_dev = [&mu](double x, double y) {
+        double dev = (y - mu);
+        return x + dev * dev;
+    };
+    return std::sqrt(std::accumulate(beg, end, 0.0, add_sq_dev) /
+                     (end - beg - 1));
+}
+
+// standard error of sample mean
+template <typename Iterator>
+double std_err(Iterator beg, Iterator end) {
+    return std_dev(beg, end) / std::sqrt(end - beg);
 }
 
 template <typename InputIterator, typename OutputIterator>
