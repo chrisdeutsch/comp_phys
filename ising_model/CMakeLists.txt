@@ -4,8 +4,8 @@ project(ising_model)
 set(EXECUTABLE_NAME "ising_model")
 
 include_directories(src)
-FILE(GLOB_RECURSE SOURCES "*.cpp")
-FILE(GLOB_RECURSE HEADERS "*.h")
+FILE(GLOB_RECURSE SOURCES "src/*.cpp")
+FILE(GLOB_RECURSE HEADERS "src/*.h")
 
 add_executable(${EXECUTABLE_NAME} ${SOURCES} ${HEADERS})
 
