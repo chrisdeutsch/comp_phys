@@ -129,18 +129,17 @@ int main() {
     constexpr std::size_t lattice_size = 100;
     Lattice<lattice_size> lattice;
 
-    // Hamiltonian
-    double J = +1.0;
+    // Parameter of hamiltonian
+    const double J = +1.0;
 
     // Simulated annealing settings
-    const double temp_max = 0.1; // from linear cooling scheme
-    unsigned kmax = 10000000;    // maximum SA steps
+    const double t0 = 0.2;         // from linear cooling scheme
+    const unsigned kmax = 5000000; // maximum SA steps
 
     // RNG
     std::random_device rd;
     std::mt19937 gen(rd());
     std::bernoulli_distribution bernoulli_dist;
-    gen.discard(100000);
 
     // Populate lattice with random spins
     for (auto &row : lattice) {
@@ -173,8 +172,8 @@ int main() {
     /**
       * Linear cooling scheme
       */
-    auto annealing_schedule = [temp_max](double time_budget) {
-        return temp_max * (1 - time_budget);
+    auto annealing_schedule = [t0](double time_budget) {
+        return t0 * (1 - time_budget);
     };
 
     std::uniform_int_distribution<std::size_t> index_dist(0, lattice_size - 1);
