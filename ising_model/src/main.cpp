@@ -94,10 +94,6 @@ public:
         } else {
             rect.setFillColor(sf::Color::Black);
         }
-        //window.draw(rect);
-        //window.display();
-        // only draw whats changed (draw again -> double buffering)
-        //window.draw(rect);
     }
 
     void draw() {
@@ -153,13 +149,14 @@ int main() {
         }
     }
 
+    std::cout << "Starting energy: " << energy(lattice, J) << "\n";
+
     /**
      * Setup display
      */
     LatticeDisplay<lattice_size> display(lattice, 600);
-    // Draw in both buffers (double buffering)
-    display.draw();
-    display.draw();
+
+    // wait 2 seconds to get a look at the initial configuration
     sf::Clock clock;
     while (display && clock.getElapsedTime().asSeconds() < 2.0f) {
         display.draw();
@@ -183,7 +180,7 @@ int main() {
     std::uniform_int_distribution<std::size_t> index_dist(0, lattice_size - 1);
     std::uniform_real_distribution<> unif_dist;
 
-    for (unsigned k = 0; (k != kmax) && display; ++k) {
+    for (unsigned k = 0; display && (k != kmax); ++k) {
         // Choose random spin and flip it
         auto x_rand = index_dist(gen);
         auto y_rand = index_dist(gen);
@@ -201,11 +198,14 @@ int main() {
             lattice[x_rand][y_rand] *= -1;
             display.flip(x_rand, y_rand);
         } // else: Reject new state
+
         display.handle_events();
-        if (k % 1000 == 0) {
+        if (k % 5000 == 0) {
             display.draw();
         }
     }
+
+    std::cout << "Final energy: " << energy(lattice, J) << "\n";
 
     while (display) {
         display.handle_events();
