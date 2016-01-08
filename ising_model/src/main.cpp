@@ -94,10 +94,10 @@ public:
         } else {
             rect.setFillColor(sf::Color::Black);
         }
-        window.draw(rect);
-        window.display();
+        //window.draw(rect);
+        //window.display();
         // only draw whats changed (draw again -> double buffering)
-        window.draw(rect);
+        //window.draw(rect);
     }
 
     void draw() {
@@ -202,6 +202,9 @@ int main() {
             display.flip(x_rand, y_rand);
         } // else: Reject new state
         display.handle_events();
+        if (k % 1000 == 0) {
+            display.draw();
+        }
     }
 
     while (display) {
